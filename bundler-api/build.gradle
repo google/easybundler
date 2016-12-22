@@ -1,0 +1,30 @@
+apply plugin: 'com.android.library'
+
+android {
+    compileSdkVersion 25
+    buildToolsVersion "25.0.1"
+
+    defaultConfig {
+        minSdkVersion 15
+        targetSdkVersion 25
+        versionCode 1
+        versionName "1.0"
+
+        consumerProguardFiles 'consumer-proguard-rules.pro'
+    }
+    buildTypes {
+        release {
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+        }
+    }
+}
+
+dependencies {
+    compile project(':bundler-annotations')
+
+    testAnnotationProcessor project(':bundler-compiler')
+    testCompile "org.robolectric:robolectric:3.1.4"
+    testCompile 'junit:junit:4.12'
+    testCompile 'org.unitils:unitils-core:3.4.2'
+}
