@@ -25,7 +25,9 @@ import static com.google.common.truth.Truth.assertAbout;
 import static com.google.testing.compile.JavaSourceSubjectFactory.javaSource;
 
 /**
- * Tests for the annotation processor for EasyBundler.
+ * Tests for the annotation processor for EasyBundler. Tests different cases where compilation
+ * should fail. For tests in the case where compilation succeeds, see the class
+ * {@code EasyBundlerTest} in the bundler-api module.
  */
 public class ProcessorTest {
 
