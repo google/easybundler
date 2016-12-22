@@ -22,3 +22,36 @@ allprojects {
 task clean(type: Delete) {
     delete rootProject.buildDir
 }
+
+ext {
+    pomConfig = {
+        licenses {
+            license {
+                name 'The Apache Software License, Version 2.0'
+                url 'http://www.apache.org/licenses/LICENSE-2.0.txt'
+                distribution 'repo'
+            }
+        }
+        developers {
+            developer {
+                id 'samtstern'
+                name 'Sam Stern'
+                email "samstern@google.com"
+            }
+        }
+    }
+
+    bintrayUser = hasProperty('BINTRAY_USER') ? getProperty('BINTRAY_USER') : System.getenv('BINTRAY_USER')
+    bintrayKey = hasProperty('BINTRAY_KEY') ? getProperty('BINTRAY_KEY') : System.getenv('BINTRAY_KEY')
+    bintrayRepo = 'EasyBundler'
+    bintrayOrg = 'easygoogle'
+
+    groupId = 'pub.devrel.easybundler'
+    version = '0.1.0'
+
+    projectName = 'EasyBundler'
+    projectDescription = 'Automatic bundling for Android'
+    projectUrl = 'https://github.com/googlesamples/easybundler'
+
+    licenses = ['Apache-2.0']
+}

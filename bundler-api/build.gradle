@@ -1,4 +1,7 @@
 apply plugin: 'com.android.library'
+apply plugin: 'maven-publish'
+apply plugin: 'com.jfrog.bintray'
+
 
 android {
     compileSdkVersion 25
@@ -27,4 +30,65 @@ dependencies {
     testCompile "org.robolectric:robolectric:3.1.4"
     testCompile 'junit:junit:4.12'
     testCompile 'org.unitils:unitils-core:3.4.2'
+}
+
+task sourcesJar(type: Jar) {
+    classifier = 'sources'
+    from android.sourceSets.main.java.srcDirs
+}
+
+task javadoc(type: Javadoc) {
+    source = android.sourceSets.main.java.srcDirs
+    classpath += configurations.compile
+    classpath += project.files(android.getBootClasspath().join(File.pathSeparator))
+}
+
+task javadocJar(type: Jar, dependsOn: javadoc) {
+    classifier = 'javadoc'
+    from javadoc.destinationDir
+}
+
+artifacts {
+    archives javadocJar
+    archives sourcesJar
+}
+
+publishing {
+    publications {
+        library(MavenPublication) {
+            artifact "$buildDir/outputs/aar/bundler-api-release.aar"
+            artifact sourcesJar
+            artifact javadocJar
+
+            artifactId 'easybundler-api'
+            groupId rootProject.ext.groupId
+            version rootProject.ext.version
+            pom.withXml {
+                def root = asNode()
+                root.appendNode('description', rootProject.ext.projectDescription)
+                root.appendNode('name', rootProject.ext.projectName)
+                root.appendNode('url', rootProject.ext.projectUrl)
+                root.children().last() + rootProject.ext.pomConfig
+            }
+        }
+    }
+}
+
+bintray {
+    user = rootProject.ext.bintrayUser
+    key = rootProject.ext.bintrayKey
+
+    publications = ['library']
+
+    pkg {
+        name = 'easybundler-api'
+        repo = rootProject.ext.bintrayRepo
+        userOrg = rootProject.ext.bintrayOrg
+        licenses = rootProject.ext.licenses
+        vcsUrl = "${rootProject.ext.projectUrl}.git"
+
+        version {
+            name = rootProject.ext.version
+        }
+    }
 }

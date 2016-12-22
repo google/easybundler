@@ -4,7 +4,15 @@ EasyBundler is a library to simplify converting state objects into Bundles for A
 This repository is also a demonstration of simple annotation processing for Android libraries.
 
 ## Download
-// TODO(samstern): Download link, show compile and apt dependencies.
+In order to use EasyBundler you will need to add a `compile` dependency for the API as well
+as an `annotationProcessor` dependency for the compiler:
+
+```groovy
+dependencies {
+    compile 'pub.devrel.easybundler:easybundler-api:0.1.0'
+    annotationProcessor 'pub.devrel.easybundler:easybundler-compiler:0.1.0'
+}
+```
 
 ## Basic Usage
 First, define a simple state class in your application and annotate it with `@BundlerClass`:
@@ -86,3 +94,18 @@ open an Issue so we can discuss it.
 ### Does EasyBundler support inheritance?
 No, the current version of EasyBundler only looks at properties of the annotated class, not its
 parent class(es).
+
+
+## Publishing
+
+To install the library to your `mavenLocal()` repository, run:
+
+```
+./gradlew build :bundler-compiler:publishToMavenLocal :bundler-api:publishToMavenLocal
+```
+
+To publish to Bintray, run:
+
+```
+./gradlew build test bintrayUpload
+```
