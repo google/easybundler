@@ -47,7 +47,7 @@ ext {
     bintrayOrg = 'easygoogle'
 
     groupId = 'pub.devrel.easybundler'
-    version = '0.1.0'
+    version = '0.1.1'
 
     projectName = 'EasyBundler'
     projectDescription = 'Automatic bundling for Android'

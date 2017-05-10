@@ -9,8 +9,8 @@ as an `annotationProcessor` dependency for the compiler:
 
 ```groovy
 dependencies {
-    compile 'pub.devrel.easybundler:easybundler-api:0.1.0'
-    annotationProcessor 'pub.devrel.easybundler:easybundler-compiler:0.1.0'
+    compile 'pub.devrel.easybundler:easybundler-api:0.1.1'
+    annotationProcessor 'pub.devrel.easybundler:easybundler-compiler:0.1.1'
 }
 ```
 
@@ -101,11 +101,11 @@ parent class(es).
 To install the library to your `mavenLocal()` repository, run:
 
 ```
-./gradlew build :bundler-compiler:publishToMavenLocal :bundler-api:publishToMavenLocal
+./gradlew clean build :bundler-api:jarRelease publishToMavenLocal
 ```
 
 To publish to Bintray, run:
 
 ```
-./gradlew build test bintrayUpload
+./gradlew clean build test :bundler-api:jarRelease bintrayUpload
 ```

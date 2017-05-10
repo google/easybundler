@@ -1,3 +1,5 @@
+import com.android.builder.core.BuilderConstants;
+
 apply plugin: 'com.android.library'
 apply plugin: 'maven-publish'
 apply plugin: 'com.jfrog.bintray'
@@ -24,7 +26,9 @@ android {
 }
 
 dependencies {
-    compile project(':bundler-annotations')
+    compile(project(':bundler-annotations')) {
+        transitive = true;
+    }
 
     testAnnotationProcessor project(':bundler-compiler')
     testCompile "org.robolectric:robolectric:3.1.4"
@@ -43,9 +47,19 @@ task javadoc(type: Javadoc) {
     classpath += project.files(android.getBootClasspath().join(File.pathSeparator))
 }
 
+task jar(type: Jar) {
+    from { configurations.compile.collect { it.isDirectory() ? it : zipTree(it) } }
+    from android.sourceSets.main.java.srcDirs
+}
+
 task javadocJar(type: Jar, dependsOn: javadoc) {
     classifier = 'javadoc'
     from javadoc.destinationDir
+}
+
+task copyLibs(type: Copy) {
+    from configurations.compile
+    into 'libs'
 }
 
 artifacts {
@@ -53,16 +67,40 @@ artifacts {
     archives sourcesJar
 }
 
+// Inspiration:
+// https://gist.github.com/kellyfj/9666950
+android.libraryVariants.all { variant ->
+    def name = variant.buildType.name
+    if (BuilderConstants.DEBUG.equals(name)) {
+        return; // Skip debug builds.
+    }
+
+    // Create a new task ("jarRelease", etc)
+    def task = project.tasks.create "jar${name.capitalize()}", Jar
+    task.dependsOn variant.javaCompile
+    task.from variant.javaCompile.destinationDir
+
+    // Add bundler dependencies
+    task.from configurations.compile.collect {
+        if (it.getName().contains("bundler") && it.getName().contains("jar")) {
+            it.isDirectory() ? it : zipTree(it)
+        }
+    }
+
+    artifacts.add('archives', task);
+}
+
 publishing {
     publications {
         library(MavenPublication) {
-            artifact "$buildDir/outputs/aar/bundler-api-release.aar"
+            artifact "$buildDir/libs/bundler-api.jar"
             artifact sourcesJar
             artifact javadocJar
 
             artifactId 'easybundler-api'
             groupId rootProject.ext.groupId
             version rootProject.ext.version
+
             pom.withXml {
                 def root = asNode()
                 root.appendNode('description', rootProject.ext.projectDescription)
